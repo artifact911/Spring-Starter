@@ -9,8 +9,7 @@ public class ApplicationRunner {
         var context = new ClassPathXmlApplicationContext("application.xml");
 
         // clazz -> String -> Map<String, Object>
-        var connectionPool = context.getBean("pool2", ConnectionPool.class);
-        var connectionPoolByName = context.getBean("p4", ConnectionPool.class);
-        System.out.println(connectionPool);
+        var connectionPoolByName = context.getBean("p3", ConnectionPool.class);
+        System.out.println(connectionPoolByName);
     }
 }

@@ -1,0 +1,30 @@
+Для инициализации бина с конструктором с параметрами:
+         <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool">
+                <constructor-arg index="0" type="java.lang.String" value="postgres"/>
+                <constructor-arg index="1" type="java.lang.Integer" value="10"/>
+                <constructor-arg type="java.util.List" index="2">
+                    <list>
+                        <value>--arg1=value1</value>
+                        <value>--arg2=value2</value>
+                    </list>
+                </constructor-arg>
+                <constructor-arg type="java.util.Map" index="3">
+                    <map>
+                        <entry key="url" value="postgresurl"/>
+                        <entry key="password" value="123"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+
+         Важно собляюдать порядок передаваемых параметров. Либо вводим index и говорим в какой индекс (аргументы
+            представлены массивом) положить тот или иной аргумент. Теперь мы можем их путать. Иожем указать ожидаемый
+            тип.
+         А можем это все выпилить и указывать имя поля:
+                 <constructor-arg name="userName" type="java.lang.String" value="postgres"/>
+                 <constructor-arg name="poolSize" type="java.lang.Integer" value="10"/>
+
+Если несмколько конструкторов есть у объекта, тогда нам нужно явно указать, что будет принимать наш конструктор.
+    Например String имеет много конструкторов и мы ходим заюзать такой:
+        <bean id="driver" class="java.lang.String">
+                <constructor-arg type="java.lang.String" value="PosgresDriver"/>
+        </bean>
