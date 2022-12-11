@@ -1,0 +1,19 @@
+Для конфигурирования бинов через xml обращаемся к классу и указываем на файл, где читать инфу, как его создавать:
+        var context = new ClassPathXmlApplicationContext("application.xml");
+
+    Затем создаем этот xml и там указываем:
+        <bean class="com.art.spring.database.pool.ConnectionPool"/>
+
+    Теперь если мы попросим вернуть нам бин черег класс, то он вернется
+         var connectionPool = context.getBean(ConnectionPool.class);
+
+    Но если у нас будет в xml два одинаковых бина, то будет исключение, т.к. непонятно, какой возвращать. Тогда можно
+        этим бинам давать id и name. Имен давать можно много ч/з запятую. Все это должно быть уникальным.
+             <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool"/>
+             <bean id="pool2" name="p4" class="com.art.spring.database.pool.ConnectionPool"/>
+
+    Но без указания класса будет возвращаться Object, поэтому стоит передавать класс:
+         // clazz -> String -> Map<String, Object>
+         var connectionPool = context.getBean("pool2", ConnectionPool.class);
+         var connectionPoolByName = context.getBean("p4", ConnectionPool.class);
+
