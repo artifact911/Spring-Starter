@@ -20,4 +20,9 @@
     1. @PreDestroy
     2. destroy() - DesposableBean
     3. destroy-method - xml
+
+![](000scr/Bean Factory Post Processors BFPP.png)
+    
+    BeanFactoryPostProcessor (BFPP) - тут мы читаем Expression Language и SpEL и пордкручиваем наши бины. Так же тут мы 
+        инициализируем бины, которые нужны для инициализации других бинов.
     
