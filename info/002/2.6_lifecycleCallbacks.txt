@@ -1,0 +1,26 @@
+Мы хотим проинициализировать наш connectionPool при создании.
+(Если мы заюзали все три способа, то и сработают все в порядке, как представлено анноташка, интерфейс, xml)
+
+    1. Через xml:
+        Создадим в классе метод init и в xml его вызовем.
+            При запуске мы увидим: вызвался конструктор -> сеттер -> метод
+
+            <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool"
+              init-method="init"
+              scope="singleton">
+
+    2. (нежелательный способ) В классе реализуя интерфейс InitializingBean
+          @Override
+          public void afterPropertiesSet() throws Exception {
+              System.out.println("Init connection pool by interface-method");
+          }
+
+    3. Аннотация @PostConstruct
+
+Мы хотим сделать что-то после закрытия контекста. ЗАКРЫВАЕТСЯ ключевое слово. Т.е. мы явно его должны закрыть.
+
+     1. Через xml:
+         <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool"
+                  init-method="init"
+                  destroy-method="destroy"
+                  scope="singleton">
