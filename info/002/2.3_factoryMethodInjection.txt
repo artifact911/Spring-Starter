@@ -1,0 +1,38 @@
+Как заинжектить объект? Мы можем заинжектить зареганный нами бин:
+
+      <bean id="driver" class="java.lang.String">
+            <constructor-arg type="java.lang.String" value="PosgresDriver"/>
+        </bean>
+
+        <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool">
+        // и в конструктор ссылку мы можем передать так:
+            <constructor-arg name="userName" type="java.lang.String" ref="driver"/>
+            <constructor-arg name="poolSize" type="java.lang.Integer" value="10"/>
+            <constructor-arg type="java.util.List" name="args">
+                <list>
+                    <value>--arg1=value1</value>
+                    <value>--arg2=value2</value>
+                    // в списки бины кладем так:
+                    <ref bean="driver"/>
+                </list>
+            </constructor-arg>
+            <constructor-arg type="java.util.Map" name="properties">
+                <map>
+                    <entry key="url" value="postgresurl"/>
+                    <entry key="password" value="123"/>
+                    // по ключу key="driver" у нас лежит бин с id="driver", а значение указываем value-ref="driver"
+                    <entry key="driver" value-ref="driver"/>
+                </map>
+            </constructor-arg>
+        </bean>
+
+И Так:
+     <bean id="companyRepository" class="com.art.spring.database.repository.CompanyRepository">
+     // ref может брать и id и alias
+            <constructor-arg ref="pool1"/>
+     </bean>
+
+Теперь для использования фабричного метода, мы добавляем новый атрибут - factory-method:
+     <bean id="companyRepository" class="com.art.spring.database.repository.CompanyRepository" factory-method="of">
+             <constructor-arg ref="pool1"/>
+     </bean>
