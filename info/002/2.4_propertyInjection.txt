@@ -1,0 +1,11 @@
+1. для установки полей через set() снимаем с полей final. И для set-методов у нас юзается тег - property:
+         <property name="properties">
+                    <map>
+                        <entry key="url" value="postgresurl"/>
+                        <entry key="password" value="123"/>
+                        <entry key="driver" value-ref="driver"/>
+                    </map>
+         </property>
+
+Этот стпособ лучше не применять на практике. Лучше использовать конструкторы. Мы не выпиливаем таким образом final и
+    наш бин в более безопасном положении в многопоточности.
