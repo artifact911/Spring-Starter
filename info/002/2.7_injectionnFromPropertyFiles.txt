@@ -1,0 +1,31 @@
+1. Вынесем в проперти необходимое.
+2. В xml создадим бин, который будет это все читать не присваивая ему ни id ничего. Мы не будем никак к нему обращаться:
+     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+                <property name="locations" value="application.properties"/>
+     </bean>
+
+2.1 Но можно поправить шапку и тогда сделать иначе:
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:context="http://www.springframework.org/schema/context"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+        <context:property-placeholder location="classpath:application.properties"/>
+
+    property-placeholder - сам создаст за нас вышеупомянутый бин.
+
+3. Теперь мы можем заюзать Expression Language
+      <constructor-arg type="java.lang.String" value="${db.driver}"/>
+
+3.1 SpEL - SpringExpressionLanguage - мы можем обращаться через #{} прям к объекстам и пасть более сложные вещи
+    <entry key="test" value="#{driver.length() > 10}"/>
+
+    обращение к утильным классам:
+    <entry key="test1" value="#{driver.length() > T(Math).random() * 10}"/>
+
+    получил в виде списка:
+    <entry key="hosts" value="#{'${db.hosts}'.split(',')}"/>
+    сначала exprLang достал мне стринг из файла, и внутри SpEL я разбил ее, получив в итоге список
