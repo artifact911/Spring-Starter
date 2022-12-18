@@ -1,0 +1,12 @@
+Описан в BeansLifecycle (000 package)
+    возвращаясь к CommonAnnotationBeanPostProcessor видим, что он реализует BeanFactoryAware. Aware (осведомитель) -
+        корневой интерфейс-метка для всех aware - и те, кто его реализует, обрабатывается application-контекстом.
+        Реализаций много, и все они нужны, что бы инжектить какие-то специфичные бины в нашем бин-лайфсайкле. Например,
+        мы можем попросить у него environment-переменную (в этой переменной содержится совокупность всех системных
+        пропертей и профайлов). Либо мы можем даже попросить applicationContextAware и заинжектить контекст туда, куда
+        мы попросим.
+        В данном случае, CommonAnnotationBeanPostProcessor реализует BeanFactoryAware а BeanFactoryAware имеет метод
+            setBeanFactory(BeanFactory beanFactory), а BeanFactory базовый интефейс для всех applicationContext.
+        Следовательно, наш IoC-контейнер видит все наши aware и инжектит соответствующие зависимости в них - что они
+        попросят.
+    Так кто же занимаетя инжектом всех этик aware-интерфейсов? - специальный процессор - ApplicationContextAwareProcessor
