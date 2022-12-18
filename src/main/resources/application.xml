@@ -7,11 +7,10 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
+    <context:annotation-config/>
     <context:property-placeholder location="classpath:application.properties"/>
 
-<!--        <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">-->
-<!--            <property name="locations" value="application.properties"/>-->
-<!--        </bean>-->
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
     <bean class="com.art.spring.bfpp.LogBeanFactoryPostProcessor"/>
     <bean class="com.art.spring.bfpp.VerifyPropertyBeanFactoryPostProcessor"/>
@@ -20,9 +19,8 @@
         <constructor-arg type="java.lang.String" value="${db.driver}"/>
     </bean>
 
-    <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool"
-          init-method="init"
-          destroy-method="destroy">
+<!--    выпилили методы в пользу аннотаций над методами-->
+    <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool">
         <constructor-arg name="userName" type="java.lang.String" value="${db.username}"/>
         <constructor-arg name="poolSize" type="java.lang.Integer" value="${db.pool.size}"/>
         <constructor-arg type="java.util.List" name="args">
