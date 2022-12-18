@@ -1,0 +1,25 @@
+Напишем свои постПроцессоры:
+    LogBeanFactoryPostProcessor implements BeanFactoryPostProcessor;
+    VerifyPropertyBeanFactoryPostProcessor implements BeanFactoryPostProcessor;
+
+    зарегаем их в xml:
+        <bean class="com.art.spring.bfpp.LogBeanFactoryPostProcessor"/>
+        <bean class="com.art.spring.bfpp.VerifyPropertyBeanFactoryPostProcessor"/>
+
+    Запустив в дебаге, мы видим, что beanFactory/beanDefinitionsMap/driver/value/constructorArgumentValues
+    /genericArgumentValues/0/ - value имеет значение [PosgresDriver] -> значит дефолтный постпроцессор отработал раньше
+    (PropertySourcesPlaceholderConfigurer).
+
+    Докрутим интервейс:
+        LogBeanFactoryPostProcessor implements BeanFactoryPostProcessor, Ordered
+
+        и переопределим его метод getOrder(), который возвращает интовое значение и чем оно ниже, тем выше приоритет у
+        процессора. В интерфейсе есть контстанты:
+            int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
+            int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+        В одном нашем процессорею заюзам HIGHEST_PRECEDENCE в другом 0. Запустим и видим, что все равно дефолтный
+        процессор отработал раньше.
+
+    Все потому, что в дефолтном реализован другой интерфейс PriorityOrdered + в дефолтном процессоре стоит минимальный
+    приоритет, а это значит, что мы можем в своем процессоре реализовать этот же интерфейс и назначить приоритет выше.
+    Теперь все сработало - наш драйвер в виде expressionLanguage
