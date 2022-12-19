@@ -10,6 +10,7 @@
     <context:annotation-config/>
     <context:property-placeholder location="classpath:application.properties"/>
 
+    <bean class="com.art.spring.bpp.InjectBeanPostProcessor"/>
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 
     <bean class="com.art.spring.bfpp.LogBeanFactoryPostProcessor"/>
@@ -47,7 +48,5 @@
     </bean>
     <!--    <bean id="pool2" name="p4" class="com.art.spring.database.pool.ConnectionPool"/>-->
 
-    <bean id="companyRepository" class="com.art.spring.database.repository.CompanyRepository" factory-method="of">
-        <constructor-arg ref="pool1"/>
-    </bean>
+    <bean id="companyRepository" class="com.art.spring.database.repository.CompanyRepository"/>
 </beans>
