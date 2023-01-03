@@ -23,6 +23,7 @@
     </bean>
 
 <!--    выпилили методы в пользу аннотаций над методами-->
+    <bean id="pool2" class="com.art.spring.database.pool.ConnectionPool"/>
     <bean id="pool1" name="p1,p2,p3" class="com.art.spring.database.pool.ConnectionPool">
         <constructor-arg name="userName" type="java.lang.String" value="${db.username}"/>
         <constructor-arg name="poolSize" type="java.lang.Integer" value="${db.pool.size}"/>
