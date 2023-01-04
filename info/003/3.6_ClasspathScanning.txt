@@ -1,0 +1,71 @@
+@Component - позволяет нам избежать объявление и конфигурацию бинов а xml.
+    Мы хотим использовать @Autowired над конструкторами, следовательно нам нужно уйти от xml где мы должны были явно
+    указывать, какой конструктор юзать при создании бинов либо должен быть какой-то конструктор без параметров, если мы
+    не указываем никакой явно. А мы такого не хотим, мы хотим создать все наши поля final, а значит мы хотим использовать
+    один единственный конструктор для инициализации.
+    Существует механизм
+        <context:component-scan base-package="com.art.spring"/>
+    который по какому-то фильтру в указанном пакете будет проверять наши классы. И если наши классы в этом пакете
+    удовлетворяют условиям фильтра, то создаем автоматически бин-дефинишены на основании которых мы создадим
+    бины этих классов. Так что это за условия фильтра, по которому будут искаться наши классы? Все просто, есть готовый
+    фильтр, который ищет @Component над классами. Есть еще три других аннотации, которые являются компонентами:
+        - @Controller
+        - @Repository
+        - @Service
+    Отличие только в том, что это логическое разделение - все они @Component.
+
+    Выпилим все бины, которые возможно из xml:
+        <context:annotation-config/> - выпилим, т.к. <context:component-scan/> включает в себя это предоставляя
+        необходимые bpp - пять самых главных (см. ContextAnnotationConfig.md).
+
+        Далее над бинами ставим @Component (или другие, согласно логике), а из xml удаляем их.
+
+        String - не наш класс, а значит его мы пока не можем выпилить этим функционалом @Component. Для этого позднее мы
+            исправим этот бин дойдя до джава-конфигураций.
+
+                <bean id="driver" class="java.lang.String">
+                        <constructor-arg type="java.lang.String" value="${db.driver}"/>
+                </bean>
+        И не можем сделать несколько бинов одного и того же типа - значит, если мы поставим @Component над ConnectionPool,
+            то создастся только один бинДефинишн, а значит будет один бин. Функционал на несколько бинов нам позволит
+            джафаКонфиг.
+
+        У нас этот бин имеет id-pool1, поэтому указываем его тут. По-умолчания id имя будет как название класса, но с
+            маленькой буквы.
+            @Component("pool1")
+            public class ConnectionPool.
+        Сложные типы данных в этом классе (Map, List) пока вынесем и закомментим, т.к. мы их позже проинициализируем при
+            помощи джаваКонфиг.
+        Теперь: при наличии нескольких конструкторов, scan возьмет тот, который помечен @Autowired
+
+Конструктор CompanyRepository:
+
+      public CompanyRepository(ConnectionPool pool1,
+                               List<ConnectionPool> pools,
+                               @Value("${db.pool.size}") Integer poolSize) {
+            this.pool1 = pool1;
+            this.pools = pools;
+            this.poolSize = poolSize;
+      }
+        - ConnectionPool pool1 - создание проблем не создаст, т.к. в Бине ConnectionPool мы указали id создаваемого бина,
+            если их несколько:
+                @Component("pool1")
+                public class ConnectionPool
+        - List<ConnectionPool> pools - соберет все ConnectionPool
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    // тут будет прокси, поэтому мы должны юзать интерфейс CrudRepository.
+    // т.к. у нас будет несколько реализаций CrudRepository, то при инициализации в данном случае, мы будем искать бин
+    // на основании имени параметра нашего конструктора
+    private final CrudRepository<Integer, Company> companyRepository;
+
+    public UserService(UserRepository userRepository,
+                       CrudRepository<Integer, Company> companyRepository) {
+        this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
+    }
+}
