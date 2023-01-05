@@ -1,13 +1,16 @@
 package com.art.spring;
 
+import com.art.spring.config.ApplicationConfiguration;
 import com.art.spring.database.pool.ConnectionPool;
 import com.art.spring.database.repository.CrudRepository;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ApplicationRunner {
 
     public static void main(String[] args) {
-        try (var context = new ClassPathXmlApplicationContext("application.xml")) {
+        // переход к классу конфигурации
+//        try (var context = new ClassPathXmlApplicationContext("application.xml")) {
+        try (var context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class)) {
 
             // clazz -> String -> Map<String, Object>
             var connectionPool = context.getBean("pool1", ConnectionPool.class);
