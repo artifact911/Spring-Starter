@@ -1,0 +1,23 @@
+Представим, что я хочу какой-то бин или цедую конфигурацию подключать только тогда, когда мы разворачиваем приложение в
+    прод. Для этого служит @Profile("prod"). Нужно сказать, что с этой аннотацией работают логические операторы !, &, |
+    Значит мое значение в аннотации может быть "!prod"
+
+Как активировать профайлы:
+    1. через .properties: - самый популярный
+        spring.profiles.active=prod - мы запустили prod, а значит web бин не бцдет подгружен. Запустим в дебаге и
+            посмотрим context.getBeanDefinitionNames() - среди прочих не будет нашего web-бина
+
+    2. через context:
+        context.getEnvironment().setActiveProfiles("web", "prod"); - по после этого не сработает, т.к. бины уже созданы.
+        Нужно обновить контекст:
+        context.refresh();
+        И нужно вызывать new AnnotationConfigApplicationContext() с конструктором без параметров, т.к. в них не
+        запускается автоматически context.refresh(); - и нам это не нужно, т.к. два раза жизненный цикл бинов не
+        запустится.
+
+        try (var context = new AnnotationConfigApplicationContext()) {
+            context.register(ApplicationConfiguration.class);
+            context.getEnvironment().setActiveProfiles("web", "prod");
+            context.refresh();
+        }
+
