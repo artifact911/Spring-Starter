@@ -1,0 +1,24 @@
+1. https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#getting-started
+    Подключаем спрингБут плагин, который создает таски свои в грэдл + имеет множество различных конфигураций
+    с другими плагинами.
+        id 'org.springframework.boot' version '2.6.2'
+
+2. https://docs.spring.io/dependency-management-plugin/docs/current-SNAPSHOT/reference/html/
+    Плагин для менеджмента версий
+
+    !!! Версии больше нигде теперь не проставляем
+
+3. добавляем коровый стартер
+     implementation 'org.springframework.boot:spring-boot-starter'
+
+4. Перепиливаем main-Class
+
+    @SpringBootApplication
+    public class ApplicationRunner {
+
+        public static void main(String[] args) {
+            SpringApplication.run(ApplicationRunner.class, args);
+        }
+    }
+
+5. Удаляем xml
