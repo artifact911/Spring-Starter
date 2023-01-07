@@ -1,0 +1,15 @@
+1. @SpringBootApplication должен существовать в единственном экземпляре и  лежать в рутовой
+    директории и все классы приложения должны лежать ПОД ним. Ставится над классом.
+
+2. SpringApplication.run(ApplicationRunner.class, args); - создает обычный контекст, как мы и видели ранее.
+    var context = SpringApplication.run(ApplicationRunner.class, args);
+
+3. @SpringBootApplication состоит из:
+    - @Target(TYPE)
+    - @SpringBootConfiguration - точно такая же конфигурация, как и те, что мы видели ранее
+    - @ComponentScan - с фильтрами. Нам не нужно больше нигде писать что и где сканировать на предмет бинов.
+        А скарироваться теперь будет в том пакете автоматически, где лежит @SpringBootApplication
+    - @EnableAutoConfiguration - включает автоконфигурацию - мы не импортируем наши зависимости через
+        @Import и таким образом включается механизм автоконфигурации на основании кондишенелов.
+
+4. *.properties с именем application.properties будет грузиться автоматически
