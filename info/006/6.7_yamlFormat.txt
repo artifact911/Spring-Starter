@@ -1,0 +1,32 @@
+YAML - Yet Another Markup Language
+    Для работы с Yaml в спринг вместе с Boot тянется зависимость, предоставляющая YamlPropertiesFactoryBean для работы с
+        yaml.
+
+    Можно в приложении использовать и *.properties и *.yaml одновременно, но это плохая практика. Нужно определиться.
+    Но *.properties в случе совместой работы будет имет приоритет.
+
+    !! application.yaml == application.yml
+
+        db:
+          username: ${username.value:postgres}
+          password: pass
+          driver: PostgresDriver
+          url: postgres:5432
+          hosts: localhost,127.0.0.1
+          pool:
+            size: 12
+            timeout: 10
+          pools:
+            - size: 1
+              timeout: 1
+            - size: 2
+              timeout: 2
+            - size: 3
+              timeout: 3
+
+    db: - вложенность. Значит все, что ниже имеет префикс db.
+
+    // массив объектов с такими полями
+    pools:
+        - size: 1
+          timeout: 1
