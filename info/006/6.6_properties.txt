@@ -1,0 +1,39 @@
+https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
+Есть несколько зарезервированных проперти-имен в спринг. application.properties мы уже видели.
+
+spring.properties - используется для low-level конфигураций, например бинов спринга. К нему можно получить через
+    утилитный класс SpringProperties.
+    Можно создать файлик или устанавливать через код:
+        SpringProperties.setProperty(String key, String value)
+
+Согласно документации, у нас есть 14+ способов передаяи пропертей. Каждый следующий перекрывает предыдущий при
+    совпадении ключей-имен. Например, у нас есть db.username в application.properties и если такое же имя будет передано
+    через cmd, то заюзается из cmd. Так же, если у нас есть application-{profile}.properties, и этот qa профиль
+    активирован в application.properties
+        spring.profiles.active=qa
+    то считается и он и заменит значения при совпадении ключей
+
+Но чаще профайлы не активируются через spring.profiles.active=qa, куда проще передавать их через аргументы -
+    env-аргументы или jvm-options или cmd. Сэммитируем передачу через cmd:
+    run-editConfiguration-applicationRunner-programArguments (Program args не имеют какого-то определенного формата.
+    Сам разраб решает, как будет обрабатывать их в программе)
+        --spring.profiles.active=qa
+
+    Для VM options -D
+        -Ddb.username=art
+
+    PlaceHolder:
+        #если я нигде не передам этот параметр, то дефолтно используй postgres
+        db.username=${username.value:postgres}
+
+А что если проперти я хочу считывать не из классПаса а из любого другого места? Хоть с удаленной машины. Сейчас вынесем
+    наши проперти в рутовую директорию.
+    Тогда копируем абсолютный путь до файла пропертей и в editConfigurations указываю этот путь:
+        --spring.config.location=classpath:application.properties,
+        optional:file:/Users/anduser/Documents/_Projects/fromLessons/spring-starter/application.properties
+
+        Читай этот проперти, переопредели поля из файла на который я указал. Optional - значит не фейли приложение, если
+        файла там не окажется.
+
+        так же можно указывать путь http
+
