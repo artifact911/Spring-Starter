@@ -1,0 +1,75 @@
+Yaml to Class.
+    Описываем наш ямл в класс соблюдая именования полей и типов. Таким образом у нас все размаппится. Такие конфигКлассы
+        обязательно должны быть pojo, т.к. Спринг работает тут через Reflection API.
+
+    Теперь нам нужно смаппить ямл с классом. 2 способа:
+        1. Через создание бина с каком-нить конфигКлассе:
+
+            @Bean
+            @ConfigurationProperties(prefix = "db")
+            public DatabaseProperties databaseProperties() {
+                return new DatabaseProperties();
+            }
+            в дебаге context.getBean(DatabaseProperties.class) видим, что бин у нас полчился.
+
+        2. Прям в классе конфигурации:
+
+            @ConfigurationProperties(prefix = "db")
+            public class DatabaseProperties {
+            }
+            но это не сработает, т.к. нам подсвечивает, что нужно сделать этот красс бином. 2 варика решения:
+                1. Ставим анноташку @Component:
+                    @Component
+                    @ConfigurationProperties(prefix = "db")
+                    public class DatabaseProperties {
+                    }
+
+                2. Ставим в классе-раннере
+                    @ConfigurationPropertiesScan
+                    public class ApplicationRunner {
+                    }
+                    это просканирует все классы, которые помечены аннотацией @ConfigurationProperties
+
+                в дебаге context.getBean(DatabaseProperties.class) - все работает, поля есть
+
+    Но нам нужно сделать DatabaseProperties.class неизменяемым. Тогда мы не можем использовать эти варианты.
+    Делаем следующее -  @ConstructorBinding:
+
+        @Value
+        @ConstructorBinding
+        @ConfigurationProperties(prefix = "db")
+        public class DatabaseProperties {
+
+            String username;
+            String password;
+            String driver;
+            String url;
+            String hosts;
+            PoolProperties pool;
+            List<PoolProperties> pools;
+            Map<String, Object> properties;
+
+            @Value
+            public static class PoolProperties {
+
+                Integer size;
+                Integer timeout;
+            }
+        }
+
+    или переписать рекорды - тогда анноташки можно повыпиливать:
+
+        @ConfigurationProperties(prefix = "db")
+        public record DatabaseProperties(String username,
+                                         String password,
+                                         String driver,
+                                         String url,
+                                         String hosts,
+                                         PoolProperties pool,
+                                         List<PoolProperties> pools,
+                                         Map<String, Object> properties) {
+
+            public static record PoolProperties(Integer size,
+                                         Integer timeout) {
+            }
+        }
