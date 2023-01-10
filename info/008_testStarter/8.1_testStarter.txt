@@ -1,0 +1,9 @@
+Подключаем
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    и удаляем jUnit, т.к. спринг подтянет транзитивно все, что надо
+
+    Спринг умеет работать с разными тестовыми фреймворками, нам в грэдле просто нужно указать, что
+        мы будем юзать:
+            test {
+                useJUnitPlatform()
+            }
