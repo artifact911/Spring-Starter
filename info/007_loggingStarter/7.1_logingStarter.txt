@@ -1,0 +1,36 @@
+Логер в Спринге тянется транзитивной зависимостью:
+    spring-boot-starter-logging и юзается logback естественно через slf4j-api
+
+Уровни логирования:
+    - trace
+    - debug
+    - info
+    - warn
+    - error
+    - fatal
+
+    В application.yml логер можно настроить:
+        logging:
+          level:
+            root: WARN
+            com.art.spring.database.pool.ConnectionPool: INFO
+            com.art.spring.database.pool: INFO
+
+        для всего прилодения уровень WARN, а для класса ConnectionPool индивидуально - INFO. Для
+            указанного пакетв уровень можно выставить индивидуально.
+
+По умолчанию логи грузятся только в консоль. Что бы грузить в файл нужно донастроить:
+              file:
+                name: art.log
+                path: /
+
+        сохранять в файл, с таким названием в рутовой директории
+
+Если мы хотим вообще переопределить дефолтное поведение установленное в спринге, то согласно доке спринга
+    мы должны:
+     - создать файл (logback-spring.xml или logback.xml(или *.groovy))
+     - как именно настраивать теперь logback, теперь гуглим доку по нему конкретно
+        https://logback.qos.ch/manual/configuration.html
+
+        !!! Не получилось. Но лучше и не извращаться
+

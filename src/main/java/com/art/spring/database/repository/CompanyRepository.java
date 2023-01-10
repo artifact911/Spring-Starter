@@ -5,6 +5,7 @@ import com.art.spring.bpp.Transaction;
 import com.art.spring.database.pool.ConnectionPool;
 import com.art.spring.entity.Company;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -14,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository
 @Transaction
@@ -28,7 +30,7 @@ public class CompanyRepository implements CrudRepository<Integer, Company> {
 
     @PostConstruct
     private void init() {
-        System.out.println("init company repository...");
+        log.info("init company repository...");
     }
 
     @Override
