@@ -9,6 +9,19 @@ public class CompanyServiceIT {
     - initializers = ConfigDataApplicationContextInitializer.class - умеет читать yml чтоб бины наши создавать.
 
 Но можем переписать так и это будет работать
+
+    @ActiveProfiles("test")
     @SpringBootTest
     public class CompanyServiceIT {
     }
+
+    и активифровали профайл, чтоб заюзать application-test.yml
+
+    @RequiredArgsConstructor
+    @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL) - идем к инжекту через конструктор.
+    TestConstructor.AutowireMode.ALL - инжекти все поля.
+
+но  @TestConstructor можно убрать из тестового еласса и написать спецОпцию в спрингПропертях, которая как будто
+    будет эту анноташку ставить в каждом классе тестов:
+        spring.test.constructor.autowire.mode=all
+
