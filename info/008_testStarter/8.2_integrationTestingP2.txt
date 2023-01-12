@@ -1,0 +1,14 @@
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationRunner.class,
+initializers = ConfigDataApplicationContextInitializer.class)
+public class CompanyServiceIT {
+}
+
+    - @ExtendWith(SpringExtension.class) - интегрировали СпрингФрейм в тесты.
+    - @ContextConfiguration(classes = ApplicationRunner.class) - указываем какой именно контекст мы будем использовать.
+    - initializers = ConfigDataApplicationContextInitializer.class - умеет читать yml чтоб бины наши создавать.
+
+Но можем переписать так и это будет работать
+    @SpringBootTest
+    public class CompanyServiceIT {
+    }
