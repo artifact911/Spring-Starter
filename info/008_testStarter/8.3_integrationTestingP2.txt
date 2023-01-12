@@ -25,3 +25,9 @@ public class CompanyServiceIT {
     будет эту анноташку ставить в каждом классе тестов:
         spring.test.constructor.autowire.mode=all
 
+// не надо так делать
+Можем вручную отказатьс от автоопределения DirtyContext и сами ставить над классом и методом МОД определения
+    таких карактеристик при использовании тестового класса/метода:
+        @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+
