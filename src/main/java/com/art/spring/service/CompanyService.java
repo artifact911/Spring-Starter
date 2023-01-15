@@ -2,7 +2,7 @@ package com.art.spring.service;
 
 import com.art.spring.database.repository.CrudRepository;
 import com.art.spring.dto.CompanyReadDto;
-import com.art.spring.entity.Company;
+import com.art.spring.database.entity.Company;
 import com.art.spring.listener.entity.AccessType;
 import com.art.spring.listener.entity.EntityEvent;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class CompanyService {
                 .map(entity ->
                 {
                     eventPublisher.publishEvent(new EntityEvent(entity, AccessType.READ));
-                   return new CompanyReadDto(entity.id());
+                   return new CompanyReadDto(entity.getId());
                 });
     }
 }
