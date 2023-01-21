@@ -1,0 +1,21 @@
+Добавим в тест
+    private final TransactionTemplate transactionTemplate;
+    т.к. он есть в контексте, то он автоматом заинжектится. Коль это бин, но он существет в единственном экземпляре
+    и имеет свои уже настройки таймаута, уровня изоляции, propagationBehavior и т.д. А значит, будет использоваться во
+    всех транзакциях таковым. И если мы хотим это изменить, то нам нужно написать свой TransactionTemplate - но это бывает
+    довольно редко.
+        Рассмотрим, какие интересующие методы есть у transactionTemplate:
+            - transactionTemplate.execute(); - возвращает какое-то значение
+            - transactionTemplate.executeWithoutResult(); - ничего не возвращает
+
+            они оба функциональные интерфейсы.
+
+        Закомментим @Transactional и перейдем в ручное управление:
+              @Test
+              void findById() {
+                transactionTemplate.executeWithoutResult(tx -> {
+                    var company = entityManager.find(Company.class, 1);
+                    assertNotNull(company);
+                    assertThat(company.getLocales()).hasSize(2);
+                    });
+                }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 
@@ -17,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @IT
 @RequiredArgsConstructor
-@Transactional
+// закомментил для ручного управления - позже в @IT запихнули
+//@Transactional
 // по умолчанию
 //@Rollback
 @Commit
@@ -25,12 +27,16 @@ class CompanyRepositoryTest {
 
     private final EntityManager entityManager;
 
+    private final TransactionTemplate transactionTemplate;
+
     @Test
     void findById() {
-        var company = entityManager.find(Company.class, 1);
-        assertNotNull(company);
+        transactionTemplate.executeWithoutResult(tx -> {
+            var company = entityManager.find(Company.class, 1);
+            assertNotNull(company);
 
-        assertThat(company.getLocales()).hasSize(2);
+            assertThat(company.getLocales()).hasSize(2);
+        });
     }
 
     @Test
