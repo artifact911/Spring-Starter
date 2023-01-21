@@ -15,7 +15,7 @@ public class TransactionBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if(bean.getClass().isAnnotationPresent(Transaction.class)) {
+        if (bean.getClass().isAnnotationPresent(Transaction.class)) {
             transactionsBeans.put(beanName, bean.getClass());
         }
         return bean;
@@ -24,12 +24,15 @@ public class TransactionBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         Class<?> beanClass = transactionsBeans.get(beanName);
-        if(beanClass != null) {
+        if (beanClass != null) {
             return Proxy.newProxyInstance(beanClass.getClassLoader(), beanClass.getInterfaces(),
                     (proxy, method, args) -> {
                         System.out.println("Open transaction");
                         try {
                             return method.invoke(bean, args);
+                        } catch (Exception e) {
+                            System.out.println("Rollback transaction");
+                            throw e;
                         } finally {
                             System.out.println("close transaction");
                         }
