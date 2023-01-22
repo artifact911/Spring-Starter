@@ -1,0 +1,28 @@
+Попробуем обновить записть в таблице:
+    метод репо:
+    @Query("update User u " +
+                "set u.role = :role " +
+                "where u.id in (:ids)")
+    int updateRole(Role role, Long... ids);
+
+    Тест:
+    @Test
+    void checkUpdate() {
+        var resultCount = userRepository.updateRole(Role.USER, 1L, 5L);
+
+        assertEquals(2, resultCount);
+    }
+    Итог:
+    QueryExecutionRequestException: Not supported for DML operations
+
+    Вывод: @Query не поддерживает DML операции.
+    Решение: ставим над методом репо @Modifying
+
+    Но логично предположить, что наш запрос пошел в обход persistenceContext Хибера. А если мы будем
+        работать с сущностью до того, как она была изменена в этом запросе, то ее изменения мы даже и не увидим.
+        Все потому, что в персистансе контексте наши пользователи будут лежать закэшированными и на нужно вычистить контекст
+        после обновления. Решается:
+             @Modifying(clearAutomatically = true)
+
+        Нужно быть внимательным и если мы удалили сущность из persistenceContext и потом к ней где-то обратились, то
+            словим исключение. Если такое нужно, то вручную сущность нужно добавить.
