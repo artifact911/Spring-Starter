@@ -5,7 +5,6 @@ import com.art.spring.database.repository.CompanyRepository;
 import com.art.spring.integration.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
@@ -17,11 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IT
 @RequiredArgsConstructor
-// закомментил для ручного управления - позже в @IT запихнули
-//@Transactional
-// по умолчанию
-//@Rollback
-@Commit
 class CompanyRepositoryTest {
 
     private static final Integer APPLE_ID = 5;
@@ -29,6 +23,12 @@ class CompanyRepositoryTest {
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
     private final CompanyRepository companyRepository;
+
+    @Test
+    void checkFindByQueries() {
+        companyRepository.findByName("Google");
+        companyRepository.findAllByNameContainingIgnoreCase("a");
+    }
 
     @Test
     void delete() {

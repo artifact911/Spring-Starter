@@ -1,0 +1,44 @@
+Какие методы мы можем юзать у реализаций, кто реализовал интерыейс RepositoryQuery.
+    PartTreeJpaQuery - его суть, что на основании какого-то именования методов он автоматически генерирует нам
+        criteria-api-запрос и он автоматически вызывается, когда мы вызваем метод и не нужно никакой реализации.
+        SpringJpa предоставит эту реализацию за нас. И если провалиться в PartTree.class, то мы видим, что тут всего лишь
+        создается решулятрное выражение, которое и парсит название нашего метода. Все что нужно нам теперь сделать, это
+        разобраться, что за регулярное выражение. А тут все просто и используются уже существующие паттерны.
+
+        private static final String KEYWORD_TEMPLATE = "(%s)(?=(\\p{Lu}|\\P{InBASIC_LATIN}))";
+        private static final String QUERY_PATTERN = "find|read|get|query|search|stream";
+        private static final String COUNT_PATTERN = "count";
+        private static final String EXISTS_PATTERN = "exists";
+        private static final String DELETE_PATTERN = "delete|remove";
+        private static final Pattern PREFIX_TEMPLATE = Pattern.compile( //
+        			"^(" + QUERY_PATTERN + "|" + COUNT_PATTERN + "|" + EXISTS_PATTERN + "|" + DELETE_PATTERN + ")((\\p{Lu}.*?))??By");
+
+        Получается: название наших методов из зарезервированных слов паттерна + могут быть какие-то слова, а может не быть
+        + By. А в методе мы после By добавляем имя поля по которому хотим сделать запрос, например findByName()
+
+        public interface CompanyRepository extends CrudRepository<Company, Integer> {
+
+        // удаляем
+        Optional<Company> findById(Integer id);
+        // удаляем
+        void delete(Company entity);
+        }
+
+        Коль мы унаследовались от CrudRepository, что мы можем удалить наши методы, т.к. они есть в родителе.
+
+        Но можем унаследоваться от JpaRepository и тогда у нас будет еще больше методов. Написав метод, во время поднятия
+            контекста Спринг автоматически создаст нам criteria-запрос.
+        public interface CompanyRepository extends JpaRepository<Company, Integer> {
+
+            Optional<Company> findByName(String name);
+        }
+
+чтобы посмотреть более полный список зарезервированных слов, которые мы можем заюзать в названии методов предоставляемых
+    SpringDataJpa пойдем в доку
+    https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
+    Например:
+        public interface UserRepository extends JpaRepository<User, Long> {
+
+          User findByEmailAndAddress(String emailAddress, String lastname);
+        }
+
