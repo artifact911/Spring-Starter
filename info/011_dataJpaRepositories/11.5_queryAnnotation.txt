@@ -1,0 +1,23 @@
+SimpleJpaQuery и NativeJpaQuery юзают одну и ту же @Query. Разница только в hql/sql. Регулируется это в
+    @Query(nativeQuery=true/false,
+            value="сам запрос",
+            name="можно явно указать именованный запрос")
+
+    @Query("select u from User u " +
+                "where u.firstname like :firstname and u.lastname like :lastname")
+    List<User> findAllBy(String firstname, String lastname);
+
+    Но в таком виде нам % нужно подставлять самим чтобы юзать containing:
+         var users = userRepository.findAllBy("%a%", "%ov%");
+
+    @Query позволяет нам поставить проценты прям тут, отступая от hql-стандарта
+         @Query("select u from User u " +
+                    "where u.firstname like %:firstname% and u.lastname like %:lastname%")
+         List<User> findAllBy(String firstname, String lastname);
+
+    Нативный:
+          @Query(
+                    nativeQuery = true,
+                    value = "SELECT u.* FROM users u WHERE u.username = :username"
+            )
+          List<User> findAllBy(String username);
