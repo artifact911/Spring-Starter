@@ -1,0 +1,22 @@
+NamedQuery - использует обычный функционал именованных запросов из Jpa. СпрингJpa использует хибер  иу нас есть доступ
+    к EntityManager - он лежит в контексте, а это значит, что мы можем использовать все возможности хибернейта и нет никаких
+    ограничений. Все что мы делаем, это упрощаем себе работу через механизм springRepository.
+
+    @NamedQuery - пишем над сущностью. И если имя совпадает с именем метода в репозитории, где юзается PartTreeJpaQuery,
+        то у именованного запроса будет приоритет и заюзается он.
+    @NamedQuery(
+            name = "Company.findByName",
+            query = "select c from Company c where lower (c.name) = lower(:name)"
+    )
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Entity
+    // необязательно, если название класса соответствует названию таблицы
+    @Table(name = "company")
+    public class Company implements BaseEntity<Integer>{}
+
+    query = "select c from Company c where lower (c.name) = lower(:name)" - тут обязательно соблюдать именование.
+        И если написать name2, будет ошибка. Но и это можно имправить указав в методе @Param
+             Optional<Company> findByName(@Param("name2") String name);
