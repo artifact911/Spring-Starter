@@ -1,0 +1,65 @@
+Задача: хочу найти пользователя в упорядоченном списке по id первого с конца. Тогда метод в репо будет таким:
+     Optional<User> findTopByOrderByIdDesc();
+
+     Hibernate:
+         select
+             user0_.id as id1_4_,
+             user0_.birth_date as birth_da2_4_,
+             user0_.company_id as company_7_4_,
+             user0_.firstname as firstnam3_4_,
+             user0_.lastname as lastname4_4_,
+             user0_.role as role5_4_,
+             user0_.username as username6_4_
+         from
+             users user0_
+         order by
+             user0_.id desc limit ?
+
+         Если limit больше 1 хотим сделать, то:
+         List<User> findTop3ByBirthDateBeforeOrderByBirthDateDesc(LocalDate birthDate);
+
+         Hibernate:
+             select
+                 user0_.id as id1_4_,
+                 user0_.birth_date as birth_da2_4_,
+                 user0_.company_id as company_7_4_,
+                 user0_.firstname as firstnam3_4_,
+                 user0_.lastname as lastname4_4_,
+                 user0_.role as role5_4_,
+                 user0_.username as username6_4_
+             from
+                 users user0_
+             where
+                 user0_.birth_date<?
+             order by
+                 user0_.birth_date desc limit ?
+
+             Теперь тут limit=3
+
+Но все это не очень удобно, и можно спец параметры передавать вместо того, чтобы писать методы на все случаи жизни.
+        Класс org.springframework.data.domain.Sort;
+    И обхект это сортировки мы можем передавать в запрос:
+        var sortById = Sort.by("id").descending();
+
+    Подправим метод в репо:
+        List<User> findTop3ByBirthDateBefore(LocalDate birthDate, Sort sort);
+
+    Более того, сортировки можно складывать:
+        var sortById = Sort.by("firstname").and(Sort.by("lastname"));
+
+!!!    Сейчас мы поля для сортировки хардкодим, а можно иначе:
+         var sortBy = Sort.sort(User.class);
+         var sort = sortBy.by(User::getFirstname).and(sortBy.by(User::getLastname));
+
+         var allUsers = userRepository.findTop3ByBirthDateBefore(LocalDate.now(), sort);
+
+!!! Pageable - еще лучше механизм, который включает в себя и сортировку тож. Заюзаю лимит и оффсет.
+        Но если мне нужно, я могу передать и сортировку:
+        Репо:
+             List<User> findAllBy(Pageable pageable);
+        Тест:
+            var pageable = PageRequest.of(1, 2, Sort.by("id"));
+            var result = userRepository.findAllBy(pageable);
+
+            assertThat(result).hasSize(2);
+
