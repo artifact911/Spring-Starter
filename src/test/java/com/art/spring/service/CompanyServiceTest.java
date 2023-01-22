@@ -1,6 +1,6 @@
 package com.art.spring.service;
 
-import com.art.spring.database.repository.CrudRepository;
+import com.art.spring.database.repository.CompanyRepository;
 import com.art.spring.dto.CompanyReadDto;
 import com.art.spring.database.entity.Company;
 import com.art.spring.listener.entity.EntityEvent;
@@ -24,7 +24,7 @@ class CompanyServiceTest {
     private static final Integer COMPANY_ID = 1;
 
     @Mock
-    private CrudRepository<Integer, Company> companyRepository;
+    private CompanyRepository companyRepository;
     @Mock
     private UserService userService;
     @Mock

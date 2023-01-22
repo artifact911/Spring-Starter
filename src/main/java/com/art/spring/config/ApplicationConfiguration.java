@@ -1,15 +1,10 @@
 package com.art.spring.config;
 
 import com.art.spring.database.pool.ConnectionPool;
-import com.art.spring.database.repository.CrudRepository;
 import com.art.spring.database.repository.UserRepository;
 import com.art.web.config.WebConfiguration;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.*;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.context.annotation.ComponentScan.*;
 
 // комбинируем все три варианта определения BeanDefinitions добавляя xml
 //@ImportResource("classpath:application.xml")

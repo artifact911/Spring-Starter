@@ -1,0 +1,22 @@
+Теперь для всех классов зваимодействия с БД мы можем юзать интервейс, реализуя Repository и описывая функционал без
+    реализации. Спринг сам напишет реализацию:
+        import org.springframework.data.repository.Repository;
+
+        public interface CompanyRepository extends Repository<Company, Integer> {
+
+            Optional<Company> findById(Integer id);
+            void delete(Company entity);
+        }
+
+    И теперь в тестах мы просто вызвываем эти методы и все работает:
+        @Test
+        void delete() {
+        var maybeCompany = companyRepository.findById(APPLE_ID);
+        assertTrue(maybeCompany.isPresent());
+
+        maybeCompany.ifPresent(companyRepository::delete);
+        // delete() не вызовется, пока мы не закоммитим транзакцию либо нее вызовем flush() явно
+        entityManager.flush();
+
+        assertTrue(companyRepository.findById(APPLE_ID).isEmpty());
+        }
