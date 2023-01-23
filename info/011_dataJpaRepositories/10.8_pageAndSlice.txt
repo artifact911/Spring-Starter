@@ -1,0 +1,35 @@
+Мы разобрались, что Pageable позвоялет нам добавлять к запросу limit, offset но и сортировку.
+
+    List<User> findAllBy(Pageable pageable);
+
+    Типы данных при этом, которые может возвратить такой метод это Collection и Stream. Но это еще не все:
+        - Streamable - скорее обертка над итератором, для более удобного итерирования. Редко используется и похож на
+            Stream глядя на его методы.
+        - Slice - наследник Streamable предоставляя еще более удобный API для работы с возвращаемой коллекцией.
+            На самом деле нечасто используется.
+
+            var pageable = PageRequest.of(0, 2, Sort.by("id"));
+            var slice = userRepository.findAllBy(pageable);
+
+            slice.forEach(user -> System.out.println(user.getId()));
+
+            // а теперь мы можем получать следующий кусочек(страничку) и выборки, если он есть. При этом передав Pageble
+            // из этого Slice, и получится страничка 2
+            while (slice.hasNext()) {
+            slice = userRepository.findAllBy(slice.nextPageable());
+            slice.forEach(user -> System.out.println(user.getId()));
+            }
+
+        - Page - наследник Slice. Он позволяет заюзать метод count() который может нам вернуть количество страничек на
+            на сайте выборки (пагинация внизу выборки на сайте). Если нам не нужен этот счетчик - юзаем Slice.
+            Нужен - Page.
+            И дефолтный count мы можем переписать. Для этого нам пригодятся знания о @Query, где есть свойства,
+                которые мы можем юзать только с Page:
+                    - countName()
+                    - countQuery()
+                    - countProjection()
+
+                @Query(value = "select u from User u",
+                // переопределили счетчик и рассказали как и что теперь считать
+                countQuery = "select count(distinct u.firstname) from User u")
+                Page<User> findAllBy(Pageable pageable);

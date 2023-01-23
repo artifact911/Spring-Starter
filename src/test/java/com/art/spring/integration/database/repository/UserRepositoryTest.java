@@ -24,10 +24,18 @@ class UserRepositoryTest {
 
     @Test
     void checkPageable() {
-        var pageable = PageRequest.of(1, 2, Sort.by("id"));
-        var result = userRepository.findAllBy(pageable);
+        var pageable = PageRequest.of(0, 2, Sort.by("id"));
+        var slice = userRepository.findAllBy(pageable);
 
-        assertThat(result).hasSize(2);
+        slice.forEach(user -> System.out.println(user.getId()));
+
+        // а теперь мы можем получать следующий кусочек(страничку) и выборки, если он есть. При этом передав Pageble
+        // из этого Slice, и получится страничка 2
+        while (slice.hasNext()) {
+            slice = userRepository.findAllBy(slice.nextPageable());
+            slice.forEach(user -> System.out.println(user.getId()));
+        }
+
     }
 
     @Test
