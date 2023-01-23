@@ -27,13 +27,13 @@ class UserRepositoryTest {
         var pageable = PageRequest.of(0, 2, Sort.by("id"));
         var slice = userRepository.findAllBy(pageable);
 
-        slice.forEach(user -> System.out.println(user.getId()));
+        slice.forEach(user -> System.out.println(user.getCompany().getName()));
 
         // а теперь мы можем получать следующий кусочек(страничку) и выборки, если он есть. При этом передав Pageble
         // из этого Slice, и получится страничка 2
         while (slice.hasNext()) {
             slice = userRepository.findAllBy(slice.nextPageable());
-            slice.forEach(user -> System.out.println(user.getId()));
+            slice.forEach(user -> System.out.println(user.getCompany().getName()));
         }
 
     }

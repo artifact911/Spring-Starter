@@ -1,0 +1,26 @@
+@Query(value = "select u from User u join fetch u.company c",
+    countQuery = "select count(distinct u.firstname) from User u")
+    Page<User> findAllBy(Pageable pageable);
+
+    join fetch - это очень хороший тут вариант, если мы хотим достать company одним запросом. Но есть варианты с
+        @EntityGraph:
+
+    1. @NamedEntityGraph - именованный граф. Но это громоздко в классе и проблемы с сабГрафами
+
+        В классе:
+        @NamedEntityGraph(
+                // имя графа
+                name = "User.company",
+                // поле, какое хотим подтянуть
+                attributeNodes = @NamedAttributeNode("company")
+        )
+        public class User implements BaseEntity<Long>{}
+
+        В репо:
+        @EntityGraph("User.company")
+        Page<User> findAllBy(Pageable pageable);
+
+    2. @EntityGraph в репо с атрибутом. И тут мы company достали и subGraph - locales
+
+        @EntityGraph(attributePaths = {"company", "company.locales"})
+        Page<User> findAllBy(Pageable pageable);
