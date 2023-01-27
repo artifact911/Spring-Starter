@@ -1,0 +1,32 @@
+Projection - это проекции на основные сущности. Другими словами DTO, в которых есть какой-то особый перечень полей,
+    а не все поля из наших сущностей.
+
+    Они бывают двух видов: Классы и Интерфейсы. Классы нельзя использовать с нативными запросами.
+    Магия:
+        List<PersonalInfo> findAllByCompanyId(Integer companyId);
+        Заюзали этот метод и он вернул нам ДТО. Мы не писали никаких парсеров. Главное, чтобы поля имени название
+        верное и тип.
+
+        С учетом того, что проекций может быть много, я могу метод параметризовать:
+        <T> List<T> findAllByCompanyId(Integer companyId, Class<T> clazz);
+
+    Для нативных запросов не работают классы. Тут нужны интерфейсы:
+        Мы должны в селект указывать только те поля, какие указали в интерфейса с совпадением имен.
+     @Query(
+                value = "SELECT firstname, " +
+                        "lastname, " +
+                        "birth_date birthDate" + // birthDate - alias, чтоб интерфейса метод отработал
+                        " FROM users WHERE company_id = :companyId",
+                nativeQuery = true
+        )
+     List<PersonalInfo2> findAllByCompanyId(Integer companyId);
+
+    Надо помнить, что тут вернется какой-то прокси и в дебаге мы ничего там не увидим по полям, но через evaluate
+        до всего можно достучаться и все там есть.
+
+Интерфейсы позволяют нам использовать expressionLanguage:
+    @Value("#{target.firstname + ' ' + target.lastname}")
+    String getFullName();
+
+
+

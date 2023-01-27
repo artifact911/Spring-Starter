@@ -2,6 +2,8 @@ package com.art.spring.database.repository;
 
 import com.art.spring.database.entity.Role;
 import com.art.spring.database.entity.User;
+import com.art.spring.dto.PersonalInfo;
+import com.art.spring.dto.PersonalInfo2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -29,8 +31,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllBy(String username);
 
     @Modifying(clearAutomatically = true,
-    //необязательно, это в хибере по дефолту
-    flushAutomatically = true )
+            //необязательно, это в хибере по дефолту
+            flushAutomatically = true)
     @Query("update User u " +
             "set u.role = :role " +
             "where u.id in (:ids)")
@@ -52,6 +54,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"company", "company.locales"})
     @Query(value = "select u from User u",
-    countQuery = "select count(distinct u.firstname) from User u")
+            countQuery = "select count(distinct u.firstname) from User u")
     Page<User> findAllBy(Pageable pageable);
+
+//    List<PersonalInfo> findAllByCompanyId(Integer companyId);
+
+//    <T> List<T> findAllByCompanyId(Integer companyId, Class<T> clazz);
+
+
+    @Query(
+            value = "SELECT firstname, " +
+                    "lastname, " +
+                    "birth_date birthDate" + // birthDate - alias, чтоб интерфейса метод отработал
+                    " FROM users WHERE company_id = :companyId",
+            nativeQuery = true
+    )
+    List<PersonalInfo2> findAllByCompanyId(Integer companyId);
+
 }
