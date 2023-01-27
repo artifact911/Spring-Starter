@@ -3,6 +3,7 @@ package com.art.spring.integration.database.repository;
 import com.art.spring.database.entity.Role;
 import com.art.spring.database.entity.User;
 import com.art.spring.database.repository.UserRepository;
+import com.art.spring.dto.UserFilter;
 import com.art.spring.integration.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UserRepositoryTest {
 
     private final UserRepository userRepository;
+
+    @Test
+    void checkCustomImpl() {
+        UserFilter filter = new UserFilter(null, "%ov%", LocalDate.now());
+
+        var users = userRepository.findAllByFilter(filter);
+
+        System.out.println();
+    }
 
     @Test
     void checkProjections() {
