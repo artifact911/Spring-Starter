@@ -24,6 +24,15 @@ class UserRepositoryTest {
     private final UserRepository userRepository;
 
     @Test
+    void checkAuditing() {
+        var ivan = userRepository.findById(1L).get();
+        ivan.setBirthDate(ivan.getBirthDate().plusYears(1L));
+        userRepository.flush();
+
+        System.out.println();
+    }
+
+    @Test
     void checkCustomImpl() {
         UserFilter filter = new UserFilter(null, "%ov%", LocalDate.now());
 
@@ -52,7 +61,6 @@ class UserRepositoryTest {
             slice = userRepository.findAllBy(slice.nextPageable());
             slice.forEach(user -> System.out.println(user.getCompany().getName()));
         }
-
     }
 
     @Test

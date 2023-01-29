@@ -1,0 +1,44 @@
+Аудит - отслеживание того, какие записи были изменены, в какое время и кем.
+
+    Создадим:
+    @Getter
+    @Setter
+    // это нужно, чтобы поля могли быть унаследованы
+    @MappedSuperclass
+    // чтобы поля автоматом обновлялись нужно прикрутить лисенер. Самому писать не нужно - есть у Спринга готовый
+    @EntityListeners(AuditingEntityListener.class)
+    public abstract class AuditingEntity<T extends Serializable> implements BaseEntity<T> {
+
+        // полей может быть много и нам нужно указать, какие юзать
+        @CreatedDate
+        private Instant createdAt;
+
+        @LastModifiedDate
+        private Instant modifiedAt;
+    }
+
+    Добавили в БД дополнительные поля.
+    Теперь нам нужно запустить механизм аудирования - EnableJpaAuditing. Можем эту аннотацию поставить
+        над ApplicationRunner, но лучше напишем свой класс конфиг:
+
+    @EnableJpaAuditing
+    @Configuration
+    public class AuditConfiguration {
+    }
+
+    Мы добавили поля, КЕМ были внесены изменения. Это поле String и нам нужно написать провайдер для спринга,
+        что конкретно мы будем туда сетать - этож может быть логин/почта/номер телефона и т.д.
+        Дока говорит, что нам нужно создать бин AuditingAware и указать пусть к нему в @EnableAuditing -
+        (можно не указывать, Спринг сам подхаватит). Идем в конфиг и дописываем наш бин:
+            @EnableJpaAuditing
+            @Configuration
+            public class AuditConfiguration {
+
+                @Bean
+                public AuditorAware<String> auditorAware() {
+                // хардкод
+                // на реальной практике:
+                // securityContext.getCurrentUser().getId()
+                    return () -> Optional.of("KorbenDallas");
+                }
+            }
