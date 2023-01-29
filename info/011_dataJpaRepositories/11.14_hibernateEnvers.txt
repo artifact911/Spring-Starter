@@ -1,0 +1,44 @@
+Мы хотим знать не только когда и кто изменил сущность. Мы хотим знать ЧТО КОНКРЕТНО изменилось.
+    В Хибере этот механизм - HibernateEnvers - нужно подключить отдельно зависимостью:
+        implementation 'org.springframework.data:spring-data-envers'
+
+    И теперь нам нужно создать энтити, единтсвенную на все приложение, которая будет отслеживать наши зменения - ревизии.
+    в этой сущности может быть сколько угодно полей, но есть 2 обязательных - Id и время создания ревизии и для них
+    кончно же есть спецАнноташки.
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Entity
+        @RevisionEntity
+        public class Revision {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @RevisionNumber
+        private Integer id;
+
+        @RevisionTimestamp
+        private Long timestamp;
+        }
+
+    Теперь, чтобы отслеживать ревизии и все изменения в наших сущностях над сущностью нужно поставить
+        анноташку @Audited
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+        - NOT_AUDITED - не аудировать наши зависимые сущности (но для коллекций, над ними нужно явно ставить аннотацию:
+             @NotAudited
+             @Builder.Default
+             @OneToMany(mappedBy = "user")
+             private List<UserChat> userChats = new ArrayList<>();
+             )
+
+    Теперь этот механизм нужно запустить:
+    @EnableJpaAuditing
+    @EnableEnversRepositories - это добавили
+    @Configuration
+    public class AuditConfiguration {}
+
+        Этот кнофиг лежит в com.art.spring.config;, а энитити, которые нужно сканировать лежат в package com.art.spring;,
+            значит нам нужно переопределить пакет для этой анноташки:
+                @EnableEnversRepositories(basePackageClasses = ApplicationRunner.class) - типа ищи как и раньше
+
