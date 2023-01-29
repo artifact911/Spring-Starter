@@ -1,0 +1,35 @@
+Зависимость jdbc тащится транзитивно с jpa. Либо можно подключать отдельно. Заглянув
+    в JdbcTemplateAutoConfiguration.class видим два класса, с конфигами:
+        JdbcTemplateConfiguration.class
+        NamedParameterJdbcTemplateConfiguration.class
+    В Каждом их них бин JdbcTemlate, который имплементит JdbcOperations - где множество методов, упрощающих работу.
+
+    Напишем в FilterUserRepository метод:
+         List<PersonalInfo> findAllByCompanyAndRole(Integer companyId, Role role);
+
+    И его реализацию:
+        private static final String FIND_BY_COMPANY_AND_ROLE = """
+            SELECT
+                firstname,
+                lastname,
+                birth_date
+            FROM users
+            WHERE company_id = ?
+                AND role = ?
+                    """;
+
+        @Override
+        public List<PersonalInfo> findAllByCompanyAndRole(Integer companyId, Role role) {
+        return jdbcTemplate.query(FIND_BY_COMPANY_AND_ROLE,
+            (rs, rowNum) -> new PersonalInfo(
+                            rs.getString("firstname"),
+                            rs.getString("lastname"),
+                            rs.getDate("birth_date").toLocalDate()
+                        ), companyId, role);
+            }
+
+    Ток мы не увидим запроса в консоле. Выставим уровень логирования:
+        logging:
+          level:
+            root: INFO
+            org.springframework.jdbc.core: TRACE

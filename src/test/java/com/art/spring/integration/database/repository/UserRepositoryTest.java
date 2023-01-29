@@ -3,6 +3,7 @@ package com.art.spring.integration.database.repository;
 import com.art.spring.database.entity.Role;
 import com.art.spring.database.entity.User;
 import com.art.spring.database.repository.UserRepository;
+import com.art.spring.dto.PersonalInfo;
 import com.art.spring.dto.UserFilter;
 import com.art.spring.integration.annotation.IT;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,12 @@ class UserRepositoryTest {
     private final UserRepository userRepository;
 
     @Test
+    void checkJdbcTemplate() {
+        var users = userRepository.findAllByCompanyAndRole(1, Role.USER);
+        assertEquals(1, users.size());
+        System.out.println();
+    }
+    @Test
     @Commit
     void checkAuditing() {
         var ivan = userRepository.findById(1L).get();
@@ -38,10 +45,7 @@ class UserRepositoryTest {
     void checkCustomImpl() {
         // под queryDsl перепил
 //        UserFilter filter = new UserFilter(null, "%ov%", LocalDate.now());
-
-
         UserFilter filter = new UserFilter(null, "ov", LocalDate.now());
-
         var users = userRepository.findAllByFilter(filter);
 
         System.out.println();

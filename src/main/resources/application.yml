@@ -28,6 +28,7 @@ logging:
     root: INFO
     com.art.spring.database.pool.ConnectionPool: INFO
     com.art.spring.database.pool: INFO
+    org.springframework.jdbc.core: TRACE
   file:
     name: art.log
     path: /
