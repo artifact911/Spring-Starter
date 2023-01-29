@@ -36,7 +36,11 @@ class UserRepositoryTest {
 
     @Test
     void checkCustomImpl() {
-        UserFilter filter = new UserFilter(null, "%ov%", LocalDate.now());
+        // под queryDsl перепил
+//        UserFilter filter = new UserFilter(null, "%ov%", LocalDate.now());
+
+
+        UserFilter filter = new UserFilter(null, "ov", LocalDate.now());
 
         var users = userRepository.findAllByFilter(filter);
 

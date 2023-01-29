@@ -1,0 +1,36 @@
+Для всяких динамичаский WHERE, которые мы сделали при помощи критерии, есть поддержка queryDsl. Подключаем через
+    отдельную зависимость:
+        implementation 'com.querydsl:querydsl-jpa'
+        annotationProcessor 'com.querydsl:querydsl-apt'
+
+    Это не все, еще нужен плагин с задачами для queryDsl в грэдл
+    https://plugins.gradle.org/plugin/com.ewerk.gradle.plugins.querydsl
+
+        plugins {
+            id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+        }
+
+    Плагин старый, значит его нужно подконфигурить, чтоб он умел в новые гредловые понятия:
+
+        configurations {
+            querydsl.extendsFrom implementation, compileOnly, runtimeOnly
+        }
+
+    И еще настройки:
+        querydsl {
+            jpa = true
+            library = 'com.querydsl:querydsl-apt:5.0.0'
+            querydslSourcesDir = "$buildDir/generated/sources/annotationProcessor/java/main"
+        }
+
+        compileQuerydsl {
+            options.annotationProcessorPath = configurations.querydsl
+        }
+
+    Переписали метод под queryDsl тут - FilterUserRepositoryImpl.class - все работает.
+    НО у спринга все это есть из коропки и нам не нужно кастомных реализаций. В ЮзерРепо допиливаем еще интерфейс
+
+        public interface UserRepository extends
+                QuerydslPredicateExecutor<User> {}
+
+    Теперь у нас куча методов.
