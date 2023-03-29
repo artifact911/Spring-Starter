@@ -1,0 +1,24 @@
+devices-api:
+  clazz: # имя тестового класса, где юзается этот юзер и это же ключ в мапе к этому юзеру
+    cus: "cus"
+    login: "login"
+    manual: "manual"
+    team: "team"
+    tester: "tester"
+    args: # тут Map либо List надо подумать, с другими необходимыми аргументами, если таковые есть
+  clazz2: # имя тестового класса, где юзается этот юзер и это же ключ в мапе к этому юзеру
+    cus: "cus"
+    login: "login"
+    manual: "manual"
+    team: "team"
+    tester: "tester"
+    args: # тут Map либо List надо подумать, с другими необходимыми аргументами, если таковые есть
+
+certificates-api:
+  clazz: # имя тестового класса, где юзается этот юзер и это же ключ в мапе к этому юзеру
+    cus: "cus"
+    login: "login"
+    manual: "manual"
+    team: "team"
+    tester: "tester"
+    args: # тут Map либо List надо подумать, с другими необходимыми аргументами, если таковые есть
