@@ -1,0 +1,14 @@
+В web нет Jasper(JSP Engine) (нужен для обраюотки .jsp), а нам сейчас надо (позже не будем) прикрутим зависимость:
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+
+    Теперь идем в yml и настраиваем наш viewResolver:
+    spring:
+      mvc:
+        view:
+          prefix: /WEB-INF/jsp/
+          suffix: .jsp
+
+    prefix - сюда мы будем складировать все наши jsp
+    suffix - как будут заканчиваться все наши view
+
+    Таким образом, идет префикс, потом дальнейший путь + имя jsp и потом его расширение и resolver знает, где искать нужную jsp
