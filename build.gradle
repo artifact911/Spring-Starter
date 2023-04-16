@@ -33,6 +33,9 @@ dependencies {
     // заменили на testcontainers
 //    testImplementation 'com.h2database:h2'
     testImplementation "org.testcontainers:postgresql:${versions.testcontainers}"
+
+    //web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 querydsl {
