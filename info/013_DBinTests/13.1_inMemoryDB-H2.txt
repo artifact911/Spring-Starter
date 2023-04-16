@@ -1,0 +1,18 @@
+Позволяет поднять БД в памяти и долпнуть после использования.
+    - Прикрутим зависимость:
+    testImplementation 'com.h2database:h2'
+    - теперь идем в application.yml и переопределим наш connectionPool, т.е. копируем
+          datasource:
+            url: jdbc:postgresql://localhost:5433/postgres
+            username: postgres
+            password: pass
+            driver-class-name: org.postgresql.Driver
+        и тащим это в тестовый yml переопределяя поля (url, username, password - нужно обраптиться в доки, чтобы понять,
+         как подключать - h2database.com - находим inMemory(named) - тут прелоагается url а username и password - пустые)
+              datasource:
+                url: jdbc:h2:mem:test
+                username:
+                password:
+                driver-class-name: org.h2.Driver (меняем на h2)
+
+чтобы накатить скрипты с данными есть @Sql, которую мы ставим над тестовым классом
