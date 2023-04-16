@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.Commit;
 
 import java.time.LocalDate;
 
@@ -47,7 +46,6 @@ class UserRepositoryTest extends IntegrationTestBase {
         var ivan = userRepository.findById(1L).get();
         ivan.setBirthDate(ivan.getBirthDate().plusYears(1L));
         userRepository.flush();
-
         System.out.println();
     }
 
@@ -123,7 +121,6 @@ class UserRepositoryTest extends IntegrationTestBase {
     void checkQueries() {
         var users = userRepository.findAllBy("a", "ov");
         assertThat(users).hasSize(3);
-
         System.out.println(users);
     }
 }

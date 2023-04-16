@@ -1,0 +1,14 @@
+Liquibase это миграционный фрейм.
+    Подключим:
+          implementation 'org.liquibase:liquibase-core'
+    Теперь у нас есть LiquibaseProperties.class, где указано, где должен лежать master или root changelog и как он должен
+    называться - именно тут будет конфигкрация всех других changelog:
+        private String changeLog = "classpath:/db/changelog/db.changelog-master.yaml";
+
+    Теперь создаем этот файл и указываем там все включения, а все скрипты sql переносим в ту же директорию, где и рутовый
+    changelog и перносим в них все скрипты sql
+
+    Если мы что-то изменим в скриптах, то нам придутся руками в таблице databasechangelog удалить запись, где был накачен
+    старый скрипт, иначе словим ошибку, либо в поле md5sum внести изменение строки на ту, что в консоле.
+
+    Теперь в application-test.yml меняем update на validate
