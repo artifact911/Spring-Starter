@@ -1,0 +1,52 @@
+!!! Docker 4.12 - выше там проблемы
+
+Мы можем использовать H2 базу для тестов, но мы хотим, чтобы база в проде и на тесте совпадали.
+    Несовместимости типов данных и другие отличия приводят к багам.
+    Есть готовое решение, чтобы поднимать в нашем случае postgres динамически для наших тестов.
+    Для этго мы будем юзать специальную библиотеку - Testcontainers. Ее суть, что докер динамически поднимает контейнер
+    во время наших тестов -> выполняются наши тесты -> и тушатся те контейнеры, котрые мы подняли во время этмх тестов.
+
+     testImplementation 'org.testcontainers:testcontainers'
+        - тут будут дженерик контейнеры, которые не удобно настраиывть и есть более узко-специализированные для разных БД.
+        testcontainers.org -> modules -> db
+     итого:
+         testImplementation "org.testcontainers:postgresql"
+
+Делаем:
+    @IT
+    public abstract class IntegrationTestBase {
+    public static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15.1");
+
+    @BeforeAll
+    static void runContainer() {
+        container.start();
+    }
+
+    @BeforeAll - хоть и будет вызываться перед каждым тестовым коассом, но будет в методе start() проводится проверка
+        и если контейнер запущен, то его и будут возвращать;
+
+Далее:
+     - Хост - у нас будет локальный;
+     - Имя БД, ИмяЮзера и пароль - если провалится в PostgreSQLContainer, то там они назначены дефолтно "test"
+     - порт - проблема
+
+     в application-test.yml назанчим имя и пароль "test". Лишние поля уберем.
+
+     теперь решим проблему с url т.к. он будет создаваться динамически:
+        @DynamicPropertySource
+        static void postgresProperties(DynamicPropertyRegistry registry) {
+            registry.add("spring.datasource.url", container::getJdbcUrl);
+        }
+     это динамически подставит этот урл в спрингКонтекст, когда стартанут тесты.
+
+Когда мы стартуем тесты, у нас многие падают.
+    1. Мы не должны использовать ручной @Commit, т.к. БД сама откатится
+    2. ID сузностей, к которым мы обращаемся изменяется с каждым тестом, т.к. накатывается снова и у сущностей меняется
+        id. Решаем: в скрипте явно задаем id для сущностей
+        INSERT INTO company (id, name)
+        VALUES (1, 'Google'),
+               (2, 'Meta'),
+               (3, 'Amazon');
+    Но теперь новая проблема, т.к. у нас будут дубликаты ключей при вставке, и тогда нам нужно подправить
+    postgres sequence:
+        SELECT SETVAL('company_id_seq', (SELECT MAX(id) FROM company));
