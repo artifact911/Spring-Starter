@@ -1,0 +1,41 @@
+Сейчас у нас страница jsp статическая. Мы зотим сделать ее динамической и для этого можно ипользовать артибуты.
+    В сервлетах существуют три вида:
+    - ServletContext - один еслинственный на все наши сервлеты. На практике никто не использует и мы тож в Спринге не будем;
+    - HttpSession(@SessionAttribute - достаем его из сессии, чтобы получить к нему доступ,
+            @SessionAttributes - определяем, каке артибуты по ключам будут в сессии храниться, а не в реквесте) -
+            артибуты сессии, например юзер, который залогинен в системе и мы к нему привязываем все, что угодно;
+    - HttpServletRequest(@RequestAttribute - на практике не встретим, т.к. все атрибуты по деыолту относятся к реквесту,
+            default) - атрибуты привязанные к request
+
+            в контроллере:
+                - для модели засеттаем туда по ключу "user" объект
+
+                modelAndView.setViewName("greeting/hello");
+                modelAndView.addObject("user", new UserReadDto(1L, "Ivan"));
+
+                // если делать через request, то мы делали бы request.setAttribute(name, Object); // requestScope
+
+                -  и в jsp через exprLanguage засетаем туда его
+
+                <body>
+                    Hello ${requestScope.user.username}!
+                </body>
+
+    Но если мы хотим Ivan сделать сессионным артибутом, то
+
+    // если делать через request, то мы делали бы request.getSession().setAttribute(); // sessionScope
+
+    // в скобках указываем те атрибуты, которые мы зотим сделать сессионными
+    @SessionAttributes({"user"})
+    public class GreetingController
+
+    Но как обратиться теперь к sessionAttribute? Сначала вызвав /hello мы кстановим юзера в сессию. и тогда тут он будет
+        дотступен тож. Если вызвать /bye до /hello - user не будет и будет ошибка
+
+         @GetMapping("/bye")
+            public ModelAndView bye(@SessionAttribute("user") UserReadDto user) {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("greeting/bye");
+
+            return modelAndView;
+            }
