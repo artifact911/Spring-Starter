@@ -1,0 +1,13 @@
+https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html
+
+прикручиваем:
+     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+thymeleaf имеет свои проперти в классе ThymeleafProperties, где указано, что все наши html должны дежать в директории
+    ресурсов /templates/
+    - Перенесем все наши jsp в нужную директорию... а webapp удаляем,
+        т.к. у нас сейчас не war, а jar пакет с tomcat внутри.
+    - поменяем расширения jsp ->
+    - в каждой html поправим
+        <html lang="en" xmlns:th="http://www.thymeleaf.org">
+        чтоб можно было обращаться к th

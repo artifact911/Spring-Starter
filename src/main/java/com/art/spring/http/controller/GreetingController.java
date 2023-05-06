@@ -36,7 +36,7 @@ public class GreetingController {
                         HttpServletRequest request,
                         @ModelAttribute UserReadDto userReadDto) {
 
-//        model.addAttribute("user", new UserReadDto(1L, "Ivan"));
+        model.addAttribute("user", userReadDto);
 
         return "greeting/hello";
     }
