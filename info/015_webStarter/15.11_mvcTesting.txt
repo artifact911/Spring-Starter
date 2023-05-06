@@ -1,0 +1,4 @@
+@AutoConfigureMockMvc - для тестирования контроллеров и иммитации http-запросов.
+    Теперь у нас пояаился доступ к
+        private final MockMvc mockMvc;
+    который позволяет нам отправлять mock-http-запросы.
