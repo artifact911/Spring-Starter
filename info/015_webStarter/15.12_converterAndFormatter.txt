@@ -1,0 +1,29 @@
+Converter - конвертирует одно в другое
+Formatter - преобразует исходя из локализации
+
+Есть 3 способа преозразовать дату, с которой у нас проблемы в тесте на контроллер из строки в дату:
+    1. Указавать стандарт iso в application.yml:
+        spring:
+          mvc:
+            view:
+              prefix: /WEB-INF/jsp/
+              suffix: .jsp
+            format:
+              date: iso
+        Так же можно указать для времени и даты-времени
+
+    2. Указать
+         @DateTimeFormat(pattern = "yyyy-MM-dd")
+         LocalDate birthDate;
+       Но это не очень удобно, т.к. нужно будет везде юзать аннотации. Если только это КОНКРЕТНЫЙ случай,
+       где нужно именно так
+
+    3. Создать специальный Web-конфиг (в интерфейсе куча методов и сокныертеров и форматтеров)
+        @Configuration
+        public class WebConfiguration implements WebMvcConfigurer {
+
+            @Override
+            public void addFormatters(FormatterRegistry registry) {
+                registry.addConverter(Jsr310Converters.StringToLocalDateConverter.INSTANCE);
+            }
+        }

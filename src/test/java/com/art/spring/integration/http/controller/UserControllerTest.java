@@ -37,13 +37,11 @@ class UserControllerTest extends IntegrationTestBase {
                         .param(UserCreateEditDto.Fields.lastname, "TestTest")
                         .param(UserCreateEditDto.Fields.role, "ADMIN")
                         .param(UserCreateEditDto.Fields.companyId, "1")
-                // этот тут сейчас не сработает, т.к. нужно как-то парсить дату в LocalDate
-//                        .param(UserCreateEditDto.Fields.birthDate, "2000-01-01")
+                        .param(UserCreateEditDto.Fields.birthDate, "2000-01-01")
                 )
                 .andExpectAll(
                         MockMvcResultMatchers.status().is3xxRedirection(),
                         MockMvcResultMatchers.redirectedUrlPattern("/users/{\\d+}") // ожидаем какое-то число, как минимум 1 раз, т.е. id юзера
-
                 );
     }
 }
