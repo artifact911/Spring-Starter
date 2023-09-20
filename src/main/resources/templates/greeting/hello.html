@@ -6,6 +6,7 @@
 </head>
 <body>
 <!--    Hello ${requestScope.userReadDto.username}!-->
+<!--    th:text="${userReadDto.username}" заменит текст внутри - Dummy text-->
     <p>Hello <span th:text="${userReadDto.username}">Dummy text</span>!</p>
     <p th:text="|Hello ${userReadDto.username}!|">Hello user</p>
 </body>
